@@ -2,9 +2,16 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Введите текст и нажмите Enter");
-        String text = new Scanner(System.in).nextLine();
-        System.out.println("Длина текста: " + text.length());
+        System.out.println("Введите первое число: ");
+        int numb1 = new Scanner(System.in).nextInt();
+        System.out.println("Введите второе число: ");
+        int numb2 = new Scanner(System.in).nextInt();
+
+        System.out.println("Сумма: " + (numb1+numb2));
+        System.out.println("Разность: " + (numb1-numb2));
+        System.out.println("Произведение: " + (numb1*numb2));
+        System.out.println("Частное: " + (double)(numb1/numb2));
+
 
     }
 }
