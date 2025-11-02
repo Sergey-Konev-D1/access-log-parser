@@ -33,29 +33,33 @@ public class Main {
                 BufferedReader reader =
                         new BufferedReader(fileReader);
                 int countLine = 0;
-                int maxLenght = 0;
-                int minLenght = Integer.MAX_VALUE;
+                int googlebot = 0;
+                int yandexbot = 0;
                 String line;
                 while ((line = reader.readLine()) != null) {
                     int length = line.length();
                     if (length > 1024){
                         throw new LineTolongExeption("встретилась строка длиннее 1024 символов");
                     }
-                    if(length > maxLenght){
-                        maxLenght = length;
-                    }
-                    if (length < minLenght){
-                        minLenght = length;
-                    }
                     countLine += 1;
 
+                    String userAgent = searhUserAgent(line);
+                    if("Googlebot".equals(userAgent)){
+                        googlebot += 1;
+                    }else if ("YandexBot".equals(userAgent)){
+                        yandexbot += 1;
+                    }
                 }
-                if(countLine == 0){
-                    minLenght = 0;
-                }
+
                 System.out.println("Количество строк в файле: " + countLine);
-                System.out.println("Максимальная длина строки: " + maxLenght);
-                System.out.println("Минимальная длина строки: " + minLenght);
+                System.out.println("Googlebot: " + googlebot);
+                System.out.println("YandexBot: " + yandexbot);
+
+                double reqGooglebot = (double) googlebot/countLine * 100;
+                double reqYandexBot = (double)yandexbot/countLine * 100;
+
+                System.out.println("доля запросов Googlebot: " + reqGooglebot);
+                System.out.println("доля запросов YandexBot: " + reqYandexBot);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -67,5 +71,28 @@ public class Main {
         public LineTolongExeption(String str){
             super(str);
         }
+    }
+
+    public static String searhUserAgent(String line){
+        // Разбиваю строку по двойным кавычкам и берем последний элемент, сохраняю как новую строку
+        String[] splitLineIteration1 = line.split("\"");
+        String userAgentPart = splitLineIteration1[splitLineIteration1.length - 1];
+
+        // Разбиваю полученную часть по скобкам и берем последний элемент. Здесь получаю значение строки в которой содержится юзер агент
+        String[] splitLineIteration2 = userAgentPart.split("[()]");
+        String userAgentInfo = splitLineIteration2[splitLineIteration2.length -1];
+
+        // Разбиваем по точкам с запятой для извлечения информации о боте
+        String[] splitLineIteration3 = userAgentInfo.split(";");
+
+        if (splitLineIteration3.length < 2) {
+            return ""; // возвращаю пустую строку, если количество элементов в последнем отсплитованном массиве  < 2
+        }
+
+        // получаю значение бота google или yandex (тут могут быть и другие значения, позже в основной функции проверяю через сравнение). Избавляюсь от слеша и версии бота
+        String botInfo = splitLineIteration3[1];
+        String[] splitLineIteration4 = botInfo.split("/");
+
+        return splitLineIteration4[0].trim(); // зачищаю пробелы и возвращаю строку с названием бота
     }
 }
