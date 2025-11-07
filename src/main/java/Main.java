@@ -1,12 +1,15 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         int counter = 0;
-
         while (true) {
             System.out.println("Введите путь к файлу:");
             String path = new Scanner(System.in).nextLine();
@@ -28,6 +31,8 @@ public class Main {
             counter++;
             System.out.println("Это файл номер " + counter);
 
+            Statistics stat = new Statistics();
+
             try {
                 FileReader fileReader = new FileReader(path);
                 BufferedReader reader =
@@ -42,6 +47,9 @@ public class Main {
                         throw new LineTolongExeption("встретилась строка длиннее 1024 символов");
                     }
                     countLine += 1;
+
+                    LogEntry entry = new LogEntry(line);
+                    stat.addEntry(entry);
 
                     String userAgent = searhUserAgent(line);
                     if("Googlebot".equals(userAgent)){
@@ -60,6 +68,8 @@ public class Main {
 
                 System.out.println("доля запросов Googlebot: " + reqGooglebot);
                 System.out.println("доля запросов YandexBot: " + reqYandexBot);
+                System.out.println("Статистика: ");
+                System.out.println("Средний трафик за час: " + stat.getTrafficRate());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -82,7 +92,7 @@ public class Main {
         String[] splitLineIteration2 = userAgentPart.split("[()]");
         String userAgentInfo = splitLineIteration2[splitLineIteration2.length -1];
 
-        // Разбиваем по точкам с запятой для извлечения информации о боте
+        // Разбиваю по точкам с запятой для извлечения информации о боте
         String[] splitLineIteration3 = userAgentInfo.split(";");
 
         if (splitLineIteration3.length < 2) {
