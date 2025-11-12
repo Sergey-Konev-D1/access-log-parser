@@ -36,7 +36,7 @@ public class Main {
 
             Statistics stat = new Statistics();
 
-            HashMap<String, Double> result = stat.getOsStatistics();
+
 
             try {
                 FileReader fileReader = new FileReader(path);
@@ -55,7 +55,6 @@ public class Main {
 
                     LogEntry entry = new LogEntry(line);
                     stat.addEntry(entry);
-                    result = stat.getOsStatistics();
 
                     String userAgent = searhUserAgent(line);
                     if("Googlebot".equals(userAgent)){
@@ -64,6 +63,8 @@ public class Main {
                         yandexbot += 1;
                     }
                 }
+
+                HashMap<String, Double> result = stat.getOsStatistics();
 
                 System.out.println("Количество строк в файле: " + countLine);
                 System.out.println("Googlebot: " + googlebot);
