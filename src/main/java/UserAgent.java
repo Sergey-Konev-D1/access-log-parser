@@ -9,6 +9,8 @@ public class UserAgent {
             this.operationSystem = "macOS";
         } else if (userAgentString.contains("Linux")){
             this.operationSystem = "Linux";
+        } else {
+            this.operationSystem = "Системаа не определена";
         }
 
         if (userAgentString.contains("Edge") || userAgentString.contains("Edg")){

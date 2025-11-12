@@ -4,12 +4,15 @@ import java.io.FileReader;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         int counter = 0;
+
         while (true) {
             System.out.println("Введите путь к файлу:");
             String path = new Scanner(System.in).nextLine();
@@ -33,6 +36,8 @@ public class Main {
 
             Statistics stat = new Statistics();
 
+            HashMap<String, Double> result = stat.getOsStatistics();
+
             try {
                 FileReader fileReader = new FileReader(path);
                 BufferedReader reader =
@@ -50,6 +55,7 @@ public class Main {
 
                     LogEntry entry = new LogEntry(line);
                     stat.addEntry(entry);
+                    result = stat.getOsStatistics();
 
                     String userAgent = searhUserAgent(line);
                     if("Googlebot".equals(userAgent)){
@@ -70,6 +76,15 @@ public class Main {
                 System.out.println("доля запросов YandexBot: " + reqYandexBot);
                 System.out.println("Статистика: ");
                 System.out.println("Средний трафик за час: " + stat.getTrafficRate());
+
+                ArrayList<String> osNames = new ArrayList<>(result.keySet());
+                for (int i = 0; i < osNames.size(); i++) {
+                    String osName = osNames.get(i);
+                    double fraction = result.get(osName);
+                    System.out.println(osName + ": " + fraction * 100  + "%");
+                }
+
+
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
