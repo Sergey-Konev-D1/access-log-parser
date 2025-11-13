@@ -10,7 +10,7 @@ public class UserAgent {
         } else if (userAgentString.contains("Linux")){
             this.operationSystem = "Linux";
         } else {
-            this.operationSystem = "Системаа не определена";
+            this.operationSystem = "Система не определена";
         }
 
         if (userAgentString.contains("Edge") || userAgentString.contains("Edg")){
@@ -23,6 +23,8 @@ public class UserAgent {
             this.browser = "Safari";
         } else if (userAgentString.contains("Chrome")) {
             this.browser = "Chrome";
+        } else {
+            this.browser = "Браузер не определен";
         }
     }
 

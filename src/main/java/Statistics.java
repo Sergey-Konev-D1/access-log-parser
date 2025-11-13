@@ -9,7 +9,10 @@ public class Statistics {
     private LocalDateTime minTime;
     private LocalDateTime maxTime;
     private HashSet<String> linkPages = new HashSet<>();
+    private HashSet<String> pageNotFound = new HashSet<>();
     private HashMap<String, Integer> osCounter = new HashMap<>();
+    private HashMap<String, Integer> browserCounter = new HashMap<>();
+
 
     public Statistics() {
         this.totalTraffic = 0;
@@ -28,19 +31,34 @@ public class Statistics {
             maxTime = time;
         }
 
-        if(entryLogLine.getResponseCode() == 200){
+        if (entryLogLine.getResponseCode() == 200){
             linkPages.add(entryLogLine.getPath());
         }
 
+        if (entryLogLine.getResponseCode() == 404){
+            pageNotFound.add(entryLogLine.getPath());
+        }
+
         String os = entryLogLine.getUserAgent().getOperationSystem();
-        if(os != null && !os.trim().isEmpty()){
+        if (os != null && !os.trim().isEmpty()){
             os = os.trim();
         }
-        if(osCounter.containsKey(os)){
-            int tmpCurrentCount = osCounter.get(os);
-            osCounter.put(os, tmpCurrentCount + 1);
+        if (osCounter.containsKey(os)){
+            int tmpCurrentCountOs = osCounter.get(os);
+            osCounter.put(os, tmpCurrentCountOs + 1);
         } else {
             osCounter.put(os, 1);
+        }
+
+        String browser = entryLogLine.getUserAgent().getBrowser();
+        if (browser != null && !browser.trim().isEmpty()){
+            browser = browser.trim();
+        }
+        if (browserCounter.containsKey(browser)){
+            int tmpCerrentCountBrwsr = browserCounter.get(browser);
+            browserCounter.put(browser, tmpCerrentCountBrwsr + 1);
+        } else {
+            browserCounter.put(browser,1);
         }
     }
 
@@ -48,27 +66,53 @@ public class Statistics {
         return linkPages;
     }
 
+    public HashSet<String> getPageNotFound() {
+        return pageNotFound;
+    }
+
     public HashMap<String,Double> getOsStatistics(){
-        HashMap<String,Double> res = new HashMap<>();
+        HashMap<String,Double> resOs = new HashMap<>();
         int totalCountOs = 0;
 
-        ArrayList<Integer> countsList = new ArrayList<>(osCounter.values());
-        for (int i = 0; i < countsList.size(); i++){
-            totalCountOs +=countsList.get(i);
+        ArrayList<Integer> countsListOs = new ArrayList<>(osCounter.values());
+        for (int i = 0; i < countsListOs.size(); i++){
+            totalCountOs +=countsListOs.get(i);
         }
         if (totalCountOs == 0){
-            return res;
+            return resOs;
         }
 
         ArrayList<String> osNames = new ArrayList<>(osCounter.keySet());
-        for(int i = 0; i < osNames.size(); i++) {
+        for (int i = 0; i < osNames.size(); i++) {
             String osName = osNames.get(i);
             int count = osCounter.get(osName);
             double fraction =(double) count / totalCountOs;
-            res.put(osName,fraction);
+            resOs.put(osName,fraction);
         }
-        return res;
+        return resOs;
 
+    }
+
+    public HashMap<String, Double> getBrowserStatistics() {
+        HashMap<String, Double> resBrowser = new HashMap<>();
+        int totalCountBrowser = 0;
+
+        ArrayList<Integer> countListBrowser = new ArrayList<>(browserCounter.values());
+        for (int i = 0; i < countListBrowser.size(); i++){
+            totalCountBrowser += countListBrowser.get(i);
+        }
+        if (totalCountBrowser == 0){
+            return resBrowser;
+        }
+
+        ArrayList<String> browserNames = new ArrayList<>(browserCounter.keySet());
+        for(int i =0; i < browserNames.size(); i++){
+            String browserName = browserNames.get(i);
+            int count  = browserCounter.get(browserName);
+            double fraction = (double) count / totalCountBrowser;
+            resBrowser.put(browserName,fraction);
+        }
+        return resBrowser;
     }
 
     public double getTrafficRate() {

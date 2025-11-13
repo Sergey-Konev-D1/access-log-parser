@@ -36,8 +36,6 @@ public class Main {
 
             Statistics stat = new Statistics();
 
-
-
             try {
                 FileReader fileReader = new FileReader(path);
                 BufferedReader reader =
@@ -64,7 +62,9 @@ public class Main {
                     }
                 }
 
-                HashMap<String, Double> result = stat.getOsStatistics();
+                HashMap<String, Double> resultOs = stat.getOsStatistics();
+
+                HashMap<String, Double> resultBrowser = stat.getBrowserStatistics();
 
                 System.out.println("Количество строк в файле: " + countLine);
                 System.out.println("Googlebot: " + googlebot);
@@ -78,13 +78,19 @@ public class Main {
                 System.out.println("Статистика: ");
                 System.out.println("Средний трафик за час: " + stat.getTrafficRate());
 
-                ArrayList<String> osNames = new ArrayList<>(result.keySet());
+                ArrayList<String> osNames = new ArrayList<>(resultOs.keySet());
                 for (int i = 0; i < osNames.size(); i++) {
                     String osName = osNames.get(i);
-                    double fraction = result.get(osName);
+                    double fraction = resultOs.get(osName);
                     System.out.println(osName + ": " + fraction * 100  + "%");
                 }
 
+                ArrayList<String> browserNames = new ArrayList<>(resultBrowser.keySet());
+                for (int i = 0; i < browserNames.size(); i++) {
+                    String browserName = browserNames.get(i);
+                    double fraction = resultBrowser.get(browserName);
+                    System.out.println(browserName + ": " + fraction * 100  + "%");
+                }
 
             } catch (Exception ex) {
                 ex.printStackTrace();
