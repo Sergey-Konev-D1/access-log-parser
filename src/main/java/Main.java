@@ -1,16 +1,11 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         int counter = 0;
 
         while (true) {
@@ -91,6 +86,10 @@ public class Main {
                     double fraction = resultBrowser.get(browserName);
                     System.out.println(browserName + ": " + fraction * 100  + "%");
                 }
+
+                System.out.println("Cреднее количество посещений сайта за час: " + stat.getAverageNumberOfWebsiteVisitsPerHour());
+                System.out.println("Cреднее количество ошибочных запросов в час: " + stat.getAverageNumberOfIncorrectRequestsPerHour());
+                System.out.println("Среднее посещаемость одним пользователем: " + stat.getAverageAttendancePerUser());
 
             } catch (Exception ex) {
                 ex.printStackTrace();

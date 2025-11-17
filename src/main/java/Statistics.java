@@ -1,18 +1,17 @@
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Statistics {
-    private int totalTraffic;
+    private long totalTraffic;
     private LocalDateTime minTime;
     private LocalDateTime maxTime;
     private HashSet<String> linkPages = new HashSet<>();
     private HashSet<String> pageNotFound = new HashSet<>();
     private HashMap<String, Integer> osCounter = new HashMap<>();
     private HashMap<String, Integer> browserCounter = new HashMap<>();
-
+    private ArrayList<LogEntry> entries = new ArrayList<>();
 
     public Statistics() {
         this.totalTraffic = 0;
@@ -60,6 +59,8 @@ public class Statistics {
         } else {
             browserCounter.put(browser,1);
         }
+
+        entries.add(entryLogLine);
     }
 
     public HashSet<String> getLinkPages() {
@@ -119,10 +120,57 @@ public class Statistics {
         if (minTime == null || maxTime == null) {
             return 0;
         }
-        long hoursBetween = ChronoUnit.HOURS.between(maxTime, minTime);
+        long hoursBetween = ChronoUnit.HOURS.between(minTime, maxTime);
+        System.out.println(hoursBetween);
         if(hoursBetween == 0){
             return totalTraffic;
         }
         return (double) totalTraffic / hoursBetween;
+    }
+
+    public double getAverageNumberOfWebsiteVisitsPerHour(){
+        if(minTime == null || maxTime == null){
+            return 0;
+        }
+
+        long realUserVisit = entries.stream().filter(entry -> !entry.getUserAgent().getUserAgentString().toLowerCase().contains("bot")).count();
+
+        long hoursBetween = ChronoUnit.HOURS.between(minTime, maxTime);
+        if(hoursBetween == 0){
+            return realUserVisit;
+        }
+
+        return (double) realUserVisit / hoursBetween;
+    }
+
+    public double  getAverageNumberOfIncorrectRequestsPerHour(){
+        if(minTime == null || maxTime == null){
+            return 0;
+        }
+
+        long errorReq = entries.stream().filter(entry -> entry.getResponseCode() >= 400 && entry.getResponseCode() <= 504).count();
+
+        long hoursBetween = ChronoUnit.HOURS.between(minTime, maxTime);
+        if(hoursBetween == 0){
+            return errorReq;
+        }
+
+        return (double) errorReq / hoursBetween;
+    }
+
+    public double getAverageAttendancePerUser(){
+
+        long realUserVisit = entries.stream().filter(entry -> !entry.getUserAgent().getUserAgentString().toLowerCase().contains("bot")).count();
+        if (realUserVisit == 0) {
+            return 0;
+        }
+
+        long realUserIp = entries.stream().filter(entry -> !entry.getUserAgent().getUserAgentString().toLowerCase().contains("bot"))
+                .map(entry -> entry.getIpAddress()).distinct().count();
+        if(realUserIp == 0){
+            return 0;
+        }
+
+        return (double) realUserVisit / realUserIp;
     }
 }
