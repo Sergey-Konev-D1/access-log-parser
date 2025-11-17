@@ -1,6 +1,7 @@
 public class UserAgent {
     private String operationSystem;
     private String browser;
+    private String userAgentString;
 
     public UserAgent(String userAgentString){
         if(userAgentString.contains("Windows")){
@@ -26,6 +27,8 @@ public class UserAgent {
         } else {
             this.browser = "Браузер не определен";
         }
+
+        this.userAgentString = userAgentString;
     }
 
     public String getOperationSystem() {
@@ -34,5 +37,9 @@ public class UserAgent {
 
     public String getBrowser() {
         return browser;
+    }
+
+    public String getUserAgentString() {
+        return userAgentString;
     }
 }
